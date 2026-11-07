@@ -1,0 +1,90 @@
+{
+  "seed": 505,
+  "deals": 200,
+  "rows": [
+    {
+      "opponent": "fold",
+      "baseline": 74.625,
+      "candidate": 74.625,
+      "delta": 0.0,
+      "delta_ci95": 0.0,
+      "baseline_ci95": 0.735,
+      "candidate_ci95": 0.735,
+      "baseline_faults": 0,
+      "candidate_faults": 0,
+      "hands_per_version": 400,
+      "max_seconds": 0.00998620898462832
+    },
+    {
+      "opponent": "call",
+      "baseline": 576.05,
+      "candidate": 576.05,
+      "delta": 0.0,
+      "delta_ci95": 0.0,
+      "baseline_ci95": 89.29737204673081,
+      "candidate_ci95": 89.29737204673081,
+      "baseline_faults": 0,
+      "candidate_faults": 0,
+      "hands_per_version": 400,
+      "max_seconds": 0.023651957977563143
+    },
+    {
+      "opponent": "random",
+      "baseline": 169.8375,
+      "candidate": 169.8375,
+      "delta": 0.0,
+      "delta_ci95": 0.0,
+      "baseline_ci95": 83.70475545611846,
+      "candidate_ci95": 83.70475545611846,
+      "baseline_faults": 0,
+      "candidate_faults": 0,
+      "hands_per_version": 400,
+      "max_seconds": 0.06904904200928286
+    },
+    {
+      "opponent": "shove",
+      "baseline": 168.5,
+      "candidate": 168.5,
+      "delta": 0.0,
+      "delta_ci95": 0.0,
+      "baseline_ci95": 116.49095727840076,
+      "candidate_ci95": 116.49095727840076,
+      "baseline_faults": 0,
+      "candidate_faults": 0,
+      "hands_per_version": 400,
+      "max_seconds": 0.048156750010093674
+    },
+    {
+      "opponent": "tight",
+      "baseline": 83.3,
+      "candidate": 83.3,
+      "delta": 0.0,
+      "delta_ci95": 0.0,
+      "baseline_ci95": 32.4575624110675,
+      "candidate_ci95": 32.4575624110675,
+      "baseline_faults": 0,
+      "candidate_faults": 0,
+      "hands_per_version": 400,
+      "max_seconds": 0.032260083011351526
+    },
+    {
+      "opponent": "equity",
+      "baseline": 224.1625,
+      "candidate": 224.1625,
+      "delta": 0.0,
+      "delta_ci95": 0.0,
+      "baseline_ci95": 67.30183882469092,
+      "candidate_ci95": 67.30183882469092,
+      "baseline_faults": 0,
+      "candidate_faults": 0,
+      "hands_per_version": 400,
+      "max_seconds": 0.02565487500396557
+    }
+  ],
+  "baseline_commit": "0e122b725618593fdeca6b1f5a61ad3a650cf7e1",
+  "candidate_sha256": {
+    "model.py": "800c01def9d598b46bb63ac2d1a11307183d04cfd647adf7d4e04841c739267f",
+    "poker_math.py": "fd77d7dc3ff18e019b5e8031686fe457a0c49d1c643de2b2b6372939ddd13bea",
+    "river_policy.py": "e7394617526726a9e4bb9185d47af5f31abbc32be351e004043244e4504fc115"
+  }
+}

@@ -251,7 +251,8 @@ class Model:
             river_fold = (stats['river_folds'] + 6 * fold_rate) / (stats['river_faced'] + 6)
             bet = choose_river_bet(
                 self.cards, board, self.ranges[opponents[0]], pot,
-                state.min_raise_to - state.bets[me],
+                min(state.min_raise_to - state.bets[me],
+                    state.stacks[opponents[0]]),
                 min(state.stacks[me], state.stacks[opponents[0]]),
                 river_fold, aggression, bb,
             )

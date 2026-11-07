@@ -1,3 +1,48 @@
+# Version 3: final submission corrections
+
+The final version keeps V2's betting strategy and makes two small fixes:
+
+- A straight-draw bonus requires a hole-card rank that contributes beyond
+  the board. Four connected board cards alone no longer provide that bonus.
+- River bet sizing evaluates the chips an opponent can actually call when
+  their remaining stack is below the minimum raise, then returns a legal
+  raise total. A regression test covers a five-chip opponent and a legal
+  twenty-chip raise; the uncalled excess is returned by the engine.
+
+## Verification
+
+- Full suite: **440 passed, 6 skipped**.
+- Focused bot and model tests: **35 passed**.
+- Submission checker: passed without source-review findings.
+- Final paired regression: 200 deals per opponent, both seats, both
+  versions, against all six baselines (**4,800 hands total**), seed 505.
+  Every paired return matched V2 in this sample, and all faults were zero.
+
+The regression run establishes no observed change on those sampled deals;
+these specific corrections are demonstrated by the added regression tests.
+This is not evidence of a broad increase in playing strength. Raw results
+and source hashes are in `benchmark_v3.json`.
+
+```sh
+.venv/bin/python compare_bots.py --baseline /path/to/v2.pkl --deals 200 --seed 505
+.venv/bin/python -m pytest tests test_bot.py -q
+.venv/bin/python -m submit --team texasholdem
+```
+
+The final upload still consists of four files: `texasholdem.pkl`,
+`model.py`, `poker_math.py`, and `river_policy.py`.
+
+## Adaptation experiments
+
+Broader decay and recent-activity variants were tested against V2 and
+style-switching opponents. Fresh-deal gains were inconclusive, so those
+strategy changes are not in the submitted bot. `stress_bots.py` retains
+the two local test opponents for future evaluation; they alternate between
+folding/shoving and calling/tight play every 40 hands. Test tooling is not
+part of the submission.
+
+---
+
 # Version 2: measured improvements
 
 Version 2 adds river bet sizing based on expected profit against likely

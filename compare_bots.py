@@ -51,7 +51,7 @@ def main():
             results = [score([log]) for log in logs]
             old, new = map(deck_returns, logs)
             mean, se = mean_and_se([b - a for a, b in zip(old, new)])
-            row = dict(opponent=opponent, baseline=results[0].bb_per_100[0],
+            row = dict(opponent=player(opponent).name, baseline=results[0].bb_per_100[0],
                        candidate=results[1].bb_per_100[0], delta=100 * mean,
                        delta_ci95=100 * ci95(se, len(old)),
                        baseline_ci95=results[0].ci95[0], candidate_ci95=results[1].ci95[0],
@@ -59,7 +59,7 @@ def main():
                        hands_per_version=results[0].hands,
                        max_seconds=results[1].max_move_seconds[0])
             rows.append(row)
-            print(f"{opponent:<12} {row['baseline']:>+10.1f} {row['candidate']:>+12.1f} "
+            print(f"{row['opponent']:<12} {row['baseline']:>+10.1f} {row['candidate']:>+12.1f} "
                   f"{row['delta']:>+12.1f} ± {row['delta_ci95']:<8.1f} "
                   f"{row['baseline_faults']}/{row['candidate_faults']}", flush=True)
             Path(args.out).write_text(json.dumps(dict(seed=args.seed, deals=args.deals, rows=rows), indent=2) + '\n')

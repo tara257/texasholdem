@@ -92,9 +92,11 @@ Generated pickles are local artifacts; source code is committed to GitHub.
 
 ## Current validation
 
-Version 2 passed **436 tests, with 6 skipped**, including 31 focused bot
-tests. Its four-file submission passed validation without source-review
-findings. `BENCHMARKS.md` records fresh-deal matches against version 1 and
+The final refinement passed **440 tests, with 6 skipped**, including 35
+focused bot tests. Its four-file submission passed validation without source-review
+findings. The submitted strategy is version 2 with two small corrections:
+straight-draw bonuses require a private card contribution, and river value
+bets handle opponents whose remaining stack is below the minimum raise. `BENCHMARKS.md` records fresh-deal matches against version 1 and
 paired comparisons against all six supplied baselines.
 
 To compare against a frozen older submission stored with its original
@@ -107,7 +109,10 @@ source files:
 The comparison uses the same deals and opponent random seeds for both
 versions, groups both seat rotations per deal, and reports confidence
 intervals on the paired improvement. `compare_bots.py` is local test
-tooling and is not submitted.
+tooling and is not submitted. `stress_bots.py` provides two additional
+local opponents that alternate playing styles every 40 hands. The broader
+adaptation experiments were not retained because fresh-deal improvements
+were inconclusive.
 
 ## Original build (version 1)
 
@@ -117,4 +122,4 @@ skipped**. The submission checker accepted the three-file package without
 source-review findings. The initial benchmark (seed 0, 200 deals replayed
 from both seats) finished ahead of all six supplied opponents with zero
 faults. See `BENCHMARKS.md` for version 1 results and the subsequent version 2
-comparison on fresh deals.
+comparison on fresh deals, followed by the final correction checks.

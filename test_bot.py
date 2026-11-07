@@ -177,3 +177,38 @@ def test_preflop_folding_stats_exclude_postflop_folds():
     stats = bot.opponents['villain']
     assert stats['folds'] == 1
     assert stats['pre_folds'] == 0
+
+
+@pytest.mark.parametrize('hole,board,expected', [
+    ('AS QD', '6C 7D 8H 9S', 0.0),
+    ('8H TS', '6C 7D QH', 0.09),
+    ('AH 2D', '3C 4S 9H', 0.09),
+])
+def test_straight_draw_needs_private_card_contribution(hole, board, expected):
+    from poker_math import draw_strength
+    assert draw_strength(encoded(hole), encoded(board)) == pytest.approx(expected)
+
+
+def test_river_values_short_opponent_with_legal_minimum_raise():
+    state = GameState([500, 25])
+    # Both players limp, then check through flop and turn.
+    state.process_action(PlayerAction.call(0))
+    state.process_action(PlayerAction.call(1))
+    board = cards('AC 7D 8C 2H 3S')
+    for card in board[:3]:
+        state.deal_card(card)
+    for next_card in board[3:]:
+        state.process_action(PlayerAction.call(1))
+        state.process_action(PlayerAction.call(0))
+        state.deal_card(next_card)
+    state.process_action(PlayerAction.call(1))
+    assert state.stacks[1] == 5
+    bot = Model()
+    bot.seed(cards('AS AH'), 0)
+    view = GameStateView(state)
+    bot._prepare(view)
+    bot.ranges[1] = ([tuple(encoded('KC KD'))], [1.0])
+    action = bot._decide(view, [1], encoded('AC 7D 8C 2H 3S'), 1.0, random.Random(1))
+    assert action.kind == 'raise'
+    assert action.amount == state.min_raise_to == 20
+    state.validate_action(action)

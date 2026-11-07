@@ -81,7 +81,14 @@ def draw_strength(hand, board):
         mask |= 1 << (c // 4 + 2)
     if mask & (1 << 14):
         mask |= 1 << 1
+    board_mask = 0
+    for card in board:
+        board_mask |= 1 << (card // 4 + 2)
+    if board_mask & (1 << 14):
+        board_mask |= 1 << 1
+    private_ranks = mask & ~board_mask
     straight_draw = any((mask & (31 << low)).bit_count() == 4
+                        and private_ranks & (31 << low)
                         for low in range(1, 11))
     return (0.16 if flush_draw else 0.0) + (0.09 if straight_draw else 0.0)
 
