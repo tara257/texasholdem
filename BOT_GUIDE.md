@@ -78,7 +78,8 @@ name if different (lowercase letters, digits, hyphens and underscores).
 The command creates the pickle, checks the source, and verifies it from a
 clean staging directory. It does **not** upload anything.
 
-Upload **all four files** listed by the command:
+The live Google Form asks for the public GitHub repository URL. All four
+files listed by the command are committed at the root of this repository:
 
 - `texasholdem.pkl` (or your chosen team's `.pkl`)
 - `model.py`
@@ -88,7 +89,9 @@ Upload **all four files** listed by the command:
 Use the submission form linked from https://poker-arena-site.vercel.app/#/submit.
 The published event schedule lists submissions from 16:00 to 18:00.
 Regenerate the pickle and rerun validation after any strategy changes.
-Generated pickles are local artifacts; source code is committed to GitHub.
+The validated `texasholdem.pkl` is committed alongside its Python source.
+After changes, regenerate it, validate it, and commit/push the full bundle
+before submitting the repository link. See `SUBMISSION.md` for the entry point.
 
 ## Current validation
 
