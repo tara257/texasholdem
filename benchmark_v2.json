@@ -1,0 +1,90 @@
+{
+  "seed": 202,
+  "deals": 1000,
+  "rows": [
+    {
+      "opponent": "fold",
+      "baseline": 69.375,
+      "candidate": 75.0,
+      "delta": 5.625,
+      "delta_ci95": 1.225,
+      "baseline_ci95": 1.225,
+      "candidate_ci95": 0.0,
+      "baseline_faults": 0,
+      "candidate_faults": 0,
+      "hands_per_version": 2000,
+      "max_seconds": 0.01116079097846523
+    },
+    {
+      "opponent": "call",
+      "baseline": 325.46,
+      "candidate": 582.2675,
+      "delta": 256.8075,
+      "delta_ci95": 37.77377103844909,
+      "baseline_ci95": 29.81581982218683,
+      "candidate_ci95": 37.8140479127408,
+      "baseline_faults": 0,
+      "candidate_faults": 0,
+      "hands_per_version": 2000,
+      "max_seconds": 0.13172808298259042
+    },
+    {
+      "opponent": "random",
+      "baseline": 116.73750000000001,
+      "candidate": 113.4825,
+      "delta": -3.2550000000000003,
+      "delta_ci95": 36.87412149038465,
+      "baseline_ci95": 34.41413641783178,
+      "candidate_ci95": 33.63758823119638,
+      "baseline_faults": 0,
+      "candidate_faults": 0,
+      "hands_per_version": 2000,
+      "max_seconds": 0.051853375014616176
+    },
+    {
+      "opponent": "shove",
+      "baseline": 105.5,
+      "candidate": 105.5,
+      "delta": 0.0,
+      "delta_ci95": 0.0,
+      "baseline_ci95": 53.18244289078711,
+      "candidate_ci95": 53.18244289078711,
+      "baseline_faults": 0,
+      "candidate_faults": 0,
+      "hands_per_version": 2000,
+      "max_seconds": 0.05011562499566935
+    },
+    {
+      "opponent": "tight",
+      "baseline": 48.902499999999996,
+      "candidate": 71.825,
+      "delta": 22.9225,
+      "delta_ci95": 7.2948556489713585,
+      "baseline_ci95": 10.294075261249759,
+      "candidate_ci95": 9.732878392994172,
+      "baseline_faults": 0,
+      "candidate_faults": 0,
+      "hands_per_version": 2000,
+      "max_seconds": 0.01634820899926126
+    },
+    {
+      "opponent": "equity",
+      "baseline": 158.54500000000002,
+      "candidate": 177.95499999999998,
+      "delta": 19.409999999999997,
+      "delta_ci95": 19.072711687910825,
+      "baseline_ci95": 24.90303729474104,
+      "candidate_ci95": 25.491427222393703,
+      "baseline_faults": 0,
+      "candidate_faults": 0,
+      "hands_per_version": 2000,
+      "max_seconds": 0.09036404101061635
+    }
+  ],
+  "baseline_commit": "c73dbba7f5d88eeee49890facaad2e6e9515ba21",
+  "candidate_sha256": {
+    "model.py": "cd21782fbee8f265a905ca2f1346a5e22fff67c6c5f16c4ff9a3aef4d22f06a4",
+    "poker_math.py": "ea4017953ccfc3b490d993488b22e29656537ba5b858468af0ad0e18f2d9572f",
+    "river_policy.py": "e7394617526726a9e4bb9185d47af5f31abbc32be351e004043244e4504fc115"
+  }
+}

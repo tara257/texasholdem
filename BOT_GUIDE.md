@@ -3,7 +3,8 @@
 Public fork: https://github.com/tara257/texasholdem
 
 `model.py` contains our strategy. `poker_math.py` contains the fast hand
-ranking, range features and equity calculation. The organiser's engine and
+ranking, range features and equity calculation. `river_policy.py` chooses
+river bet sizes using an approximate opponent-response model. The organiser's engine and
 public API files are unchanged.
 
 ## Get started
@@ -30,9 +31,14 @@ packages, network requests, API keys, model downloads or runtime files.
 - **Postflop:** simulate remaining cards against those weighted ranges;
   heads-up river equity enumerates all possible opponent hands exactly
   for the inferred range. Bet strong holdings and occasionally semi-bluff
-  draws or bluff opponents who fold frequently.
+  draws or bluff opponents who fold frequently. On the river, compare
+  checking with several bet sizes using fold probability and equity
+  specifically against hands likely to call.
 - **Adaptation:** keep smoothed aggression, calling and folding statistics
   by team name across hands. `seed()` resets only hand-specific data.
+- **Exploitation:** use preflop fold statistics to steal more blinds from
+  habitual folders; value-shove suitable hands against opponents with
+  enough observed calls and almost no folds or raises.
 - **Reliability:** respect the supplied raise range, return integer street
   totals, check when raising is unavailable, and correct heads-up pot odds
   for an overbet we cannot fully call. Sampling loops are bounded.
@@ -72,22 +78,43 @@ name if different (lowercase letters, digits, hyphens and underscores).
 The command creates the pickle, checks the source, and verifies it from a
 clean staging directory. It does **not** upload anything.
 
-Upload **all three files** listed by the command:
+Upload **all four files** listed by the command:
 
 - `texasholdem.pkl` (or your chosen team's `.pkl`)
 - `model.py`
 - `poker_math.py`
+- `river_policy.py`
 
 Use the submission form linked from https://poker-arena-site.vercel.app/#/submit.
 The published event schedule lists submissions from 16:00 to 18:00.
 Regenerate the pickle and rerun validation after any strategy changes.
 Generated pickles are local artifacts; source code is committed to GitHub.
 
-## Verified build
+## Current validation
+
+Version 2 passed **436 tests, with 6 skipped**, including 31 focused bot
+tests. Its four-file submission passed validation without source-review
+findings. `BENCHMARKS.md` records fresh-deal matches against version 1 and
+paired comparisons against all six supplied baselines.
+
+To compare against a frozen older submission stored with its original
+source files:
+
+```sh
+.venv/bin/python compare_bots.py --baseline /path/to/v1.pkl --deals 1000 --seed 202
+```
+
+The comparison uses the same deals and opponent random seeds for both
+versions, groups both seat rotations per deal, and reports confidence
+intervals on the paired improvement. `compare_bots.py` is local test
+tooling and is not submitted.
+
+## Original build (version 1)
 
 On 7 November 2026, using Python 3.14.5 and the competition's pinned
 Pydantic version, the full test run completed with **431 passed and 6
 skipped**. The submission checker accepted the three-file package without
 source-review findings. The initial benchmark (seed 0, 200 deals replayed
 from both seats) finished ahead of all six supplied opponents with zero
-faults. See `BENCHMARKS.md` for the larger benchmark on independent deals.
+faults. See `BENCHMARKS.md` for version 1 results and the subsequent version 2
+comparison on fresh deals.

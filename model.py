@@ -6,6 +6,7 @@ Python data; no files, network, external models or runtime dependencies.
 import math
 import random
 
+from river_policy import choose_river_bet
 from player_action import PlayerAction
 from poker_math import (all_hands, draw_strength, encode, made_strength,
                         preflop_strength, sample_equity)
@@ -42,7 +43,8 @@ class Model:
         if team not in self.opponents:
             self.opponents[team] = dict(hands=0, entered=0, raised_hands=0,
                                        decisions=0, raises=0, faced=0,
-                                       folds=0, calls=0)
+                                       folds=0, calls=0, pre_faced=0, pre_folds=0,
+                                       river_faced=0, river_folds=0)
         return self.opponents[team]
 
     def _profile(self, team):
@@ -137,6 +139,12 @@ class Model:
                     s['faced'] += 1
                     s['folds'] += kind == 'fold'
                     s['calls'] += kind == 'call'
+                    if not self.seen_board:
+                        s['pre_faced'] += 1
+                        s['pre_folds'] += kind == 'fold'
+                    if len(self.seen_board) == 5:
+                        s['river_faced'] += 1
+                        s['river_folds'] += kind == 'fold'
                 s['raises'] += kind == 'raise'
                 if not self.seen_board and (kind == 'raise' or (kind == 'call' and owed > 0)):
                     self.hand_players.add(p)
@@ -186,9 +194,20 @@ class Model:
             contestable -= max(0, state.bets[opp] - state.bets[me] - state.stacks[me])
         odds = call / max(1, contestable + call)
         all_in_call = call == state.stacks[me] or all(state.stacks[p] == 0 for p in opponents)
+        station = False
+        if heads_up:
+            stats = self._stats(state.teams[opponents[0]])
+            station = (stats['faced'] >= 12
+                       and stats['folds'] / stats['faced'] < 0.08
+                       and stats['raises'] / max(1, stats['decisions']) < 0.08)
         if not board:
             unopened = self.preflop_raises == 0
             if unopened and heads_up:
+                if station and equity > 0.61:
+                    return self._raise(state, state.max_raise_to)
+                if (in_position and stats['pre_faced'] >= 8
+                        and stats['pre_folds'] / stats['pre_faced'] > 0.70):
+                    return self._raise(state, 2 * bb)
                 # Open a wide button range; expand against habitual folders.
                 threshold = 0.44 - max(0.0, fold_rate - 0.5) * 0.15
                 if in_position:
@@ -228,6 +247,17 @@ class Model:
 
         if not state.can_raise:
             return PlayerAction.call(me)
+        if heads_up and len(board) == 5:
+            river_fold = (stats['river_folds'] + 6 * fold_rate) / (stats['river_faced'] + 6)
+            bet = choose_river_bet(
+                self.cards, board, self.ranges[opponents[0]], pot,
+                state.min_raise_to - state.bets[me],
+                min(state.stacks[me], state.stacks[opponents[0]]),
+                river_fold, aggression, bb,
+            )
+            return self._raise(state, state.bets[me] + bet) if bet else PlayerAction.call(me)
+        if station and equity > 0.70:
+            return self._raise(state, state.max_raise_to)
         value_threshold = (0.59 if len(board) == 5 else 0.63) if heads_up else 0.74
         if equity > value_threshold:
             fraction = 0.85 if equity > 0.83 else 0.55

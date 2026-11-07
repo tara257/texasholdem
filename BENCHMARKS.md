@@ -1,4 +1,69 @@
-# Validation and baseline results
+# Version 2: measured improvements
+
+Version 2 adds river bet sizing based on expected profit against likely
+calling hands, separate preflop/river fold statistics, wider blind steals
+against habitual folders, and larger value bets against habitual callers.
+Opponent identity is not used to select a strategy; adjustments come from
+observed actions.
+
+## Direct matches against version 1
+
+The original bot is commit `c73dbba`. Both versions played in isolated
+workers with each deal replayed from both seats.
+
+| Run | Seed | Hands | V2 profit vs V1 (bb/100, 95% interval) | Faults |
+| --- | ---: | ---: | ---: | ---: |
+| Initial screen | 101 | 1,000 | +43.4 ± 17.5 | 0 |
+| Fresh-deal validation | 202 | 2,000 | +44.0 ± 13.4 | 0 |
+
+The strategy was unchanged between these two runs.
+
+## Paired comparisons against supplied opponents
+
+Each version played 1,000 deals from both seats against each opponent:
+2,000 hands per version per opponent, 24,000 hands total. Both versions
+received identical decks and the opponent had the same random seed.
+Changes and 95% intervals are computed from paired per-deal returns,
+grouping both seat rotations before calculating uncertainty.
+
+| Opponent | V1 bb/100 | V2 bb/100 | Paired change (95% interval) | Evidence |
+| --- | ---: | ---: | ---: | --- |
+| fold | +69.4 | +75.0 | +5.6 ± 1.2 | improved |
+| call | +325.5 | +582.3 | +256.8 ± 37.8 | improved |
+| random | +116.7 | +113.5 | -3.3 ± 36.9 | inconclusive |
+| shove | +105.5 | +105.5 | +0.0 ± 0.0 | unchanged |
+| tight | +48.9 | +71.8 | +22.9 ± 7.3 | improved |
+| equity | +158.5 | +178.0 | +19.4 ± 19.1 | improved |
+
+All compared bots recorded zero faults. The difference against `random`
+is inconclusive, and the improvement against `equity` is marginal at this
+sample size. The largest gain is against `call`. These tests support
+retaining V2; they do not establish performance against unseen teams.
+
+Raw scores, intervals, runtimes, configuration and SHA-256 hashes of the
+tested candidate source are in `benchmark_v2.json`. To reproduce the
+paired comparison, keep a version-1 pickle beside its original source
+files, then run:
+
+```sh
+.venv/bin/python compare_bots.py --baseline /path/to/v1.pkl --deals 1000 --seed 202
+```
+
+## Version 2 correctness and submission
+
+- Full suite: **436 passed, 6 skipped**.
+- Focused model and bot regression tests: **31 passed**.
+- Submission checker: passed, with no source-review findings.
+- Upload all four files: `texasholdem.pkl`, `model.py`, `poker_math.py`,
+  and **`river_policy.py`**. Regenerate the pickle after changing code.
+
+The river response model is approximate: it does not solve opponent
+reraising or model future decisions. Runtime and results will vary on the
+organiser's machine.
+
+---
+
+# Version 1: original validation and baseline results
 
 Measured on 7 November 2026 with Python 3.14.5 and Pydantic 2.14.3.
 

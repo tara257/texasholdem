@@ -120,3 +120,60 @@ def test_pickle_replays_same_decision():
     clone.seed(hand, 0)
     assert bot.run([], state) == clone.run([], state)
     assert bot.random_state == clone.random_state
+
+
+def test_river_sizes_for_value_against_station():
+    from river_policy import choose_river_bet
+    bet = choose_river_bet(
+        encoded('AS AH'), encoded('AC 7D 8C 2H 3S'),
+        ([tuple(encoded('KC KD'))], [1.0]),
+        pot=100, min_bet=20, max_bet=200, fold_rate=0.02,
+        aggression=0.05, big_blind=20,
+    )
+    assert bet == 200
+
+
+def test_river_does_not_bluff_station_with_losing_hand():
+    from river_policy import choose_river_bet
+    bet = choose_river_bet(
+        encoded('4S 5H'), encoded('AC 7D 8C 2H KS'),
+        ([tuple(encoded('KC KD'))], [1.0]),
+        pot=100, min_bet=20, max_bet=200, fold_rate=0.02,
+        aggression=0.05, big_blind=20,
+    )
+    assert bet == 0
+
+
+def test_river_checks_unbeatable_shared_board():
+    from river_policy import choose_river_bet
+    bet = choose_river_bet(
+        encoded('2C 3D'), encoded('AS KS QS JS TS'),
+        ([tuple(encoded('4C 5D'))], [1.0]),
+        pot=100, min_bet=20, max_bet=200, fold_rate=0.8,
+        aggression=0.2, big_blind=20,
+    )
+    assert bet == 0
+
+
+def test_river_cannot_bet_above_effective_stack():
+    from poker_math import all_hands
+    from river_policy import choose_river_bet
+    hand, board = encoded('AS AH'), encoded('AC 7D 8C 2H 3S')
+    hands = all_hands(set(hand) | set(board))
+    bet = choose_river_bet(hand, board, (hands, [1.0] * len(hands)),
+                           100, 20, 57, 0.1, 0.1, 20)
+    assert 0 <= bet <= 57
+    assert bet == 0 or bet >= 20
+
+
+def test_preflop_folding_stats_exclude_postflop_folds():
+    bot = Model()
+    bot.seed(cards('AS AH'), 0)
+    state = GameState([500, 500], teams=['us', 'villain'])
+    bot._prepare(GameStateView(state))
+    bot.seen_board = encoded('2C 3D 7H')
+    bot.tracked_bets = [40, 0]
+    bot._observe([PlayerAction.fold(1)], GameStateView(state))
+    stats = bot.opponents['villain']
+    assert stats['folds'] == 1
+    assert stats['pre_folds'] == 0
